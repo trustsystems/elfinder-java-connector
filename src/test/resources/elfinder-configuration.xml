@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<elfinder-configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns="http://www.trustsystems.com.br/elfinder"
+                        xsi:schemaLocation="http://www.trustsystems.com.br/elfinder http://www.trustsystems.com.br/elfinder/elfinder-configuration.xsd">
+    <thumbnail>
+        <width>80</width>
+    </thumbnail>
+    <volume>
+        <source>filesystem</source>
+        <alias>My Books</alias>
+        <path>/Users/thiago/Development/books</path>
+        <locale>pt_BR</locale>
+        <constraint>
+            <locked>false</locked>
+            <readable>true</readable>
+            <writable>true</writable>
+        </constraint>
+    </volume>
+    <volume>
+        <source>filesystem</source>
+        <alias>My JDBC Drivers</alias>
+        <path>/Users/thiago/Development/jdbc/drivers</path>
+        <locale>pt_BR</locale>
+        <constraint>
+            <locked>true</locked>
+            <readable>true</readable>
+            <writable>false</writable>
+        </constraint>
+    </volume>
+</elfinder-configuration>
