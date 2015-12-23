@@ -1,25 +1,50 @@
+/*
+ * #%L
+ * %%
+ * Copyright (C) 2015 Trustsystems Desenvolvimento de Sistemas, LTDA.
+ * %%
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. Neither the name of the Trustsystems Desenvolvimento de Sistemas, LTDA. nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * #L%
+ */
 package br.com.trustsystems.elfinder.core.impl;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import br.com.trustsystems.elfinder.core.Target;
 import br.com.trustsystems.elfinder.core.Volume;
 import br.com.trustsystems.elfinder.core.VolumeBuilder;
 import br.com.trustsystems.elfinder.support.content.detect.Detector;
 import br.com.trustsystems.elfinder.support.content.detect.NIO2FileTypeDetector;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class NIO2FileSystemVolume implements Volume {
 
@@ -163,22 +188,22 @@ public class NIO2FileSystemVolume implements Volume {
 
     @Override
     public boolean hasChildFolder(Target target) throws IOException {
-    	if (isFolder(target)) {
-    		Path dir = fromTarget(target);
-    		
-    		// directory filter
-    		DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
+        if (isFolder(target)) {
+            Path dir = fromTarget(target);
+
+            // directory filter
+            DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
                 @Override
                 public boolean accept(Path path) throws IOException {
                     return Files.isDirectory(path);
                 }
             };
-    		
+
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir, filter)) {
-            	return directoryStream.iterator().hasNext();
+                return directoryStream.iterator().hasNext();
             }
-    	}
-    	return false;
+        }
+        return false;
     }
 
     @Override
@@ -194,7 +219,7 @@ public class NIO2FileSystemVolume implements Volume {
             };
 
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory, notHiddenFilter)) {
-            	List<Target> list = new ArrayList<>();
+                List<Target> list = new ArrayList<>();
                 for (Path path : directoryStream) {
                     list.add(fromPath(path));
                 }
@@ -238,13 +263,13 @@ public class NIO2FileSystemVolume implements Volume {
 
     /**
      * Gets a Builder for creating a new NIO2FileSystemVolume instance.
-     * 
+     *
      * @return a new Builder for NIO2FileSystemVolume.
      */
     public static Builder builder(String alias, Path rootDir) {
         return new NIO2FileSystemVolume.Builder(alias, rootDir);
     }
-    
+
     /**
      * Builder NIO2FileSystemVolume Inner Class
      */

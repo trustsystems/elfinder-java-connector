@@ -57,6 +57,7 @@
         <maven-jaxb2-plugin.version>0.12.3</maven-jaxb2-plugin.version>
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+        <license-maven-plugin.version>1.8</license-maven-plugin.version>
 
         <!-- elfinder java connector dependencies versions -->
         <servlet-api.version>3.1.0</servlet-api.version>
@@ -94,7 +95,7 @@
     </dependencyManagement>
 
     <dependencies>
-    	<!-- java ee -->
+        <!-- java ee -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -258,6 +259,36 @@
                     <header>elFinder Java Connector - ${project.version}</header>
                     <footer>elFinder Java Connector - ${project.version}</footer>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${license-maven-plugin.version}</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <addSvnKeyWords>true</addSvnKeyWords>
+                    <organizationName>Trustsystems Desenvolvimento de Sistemas, LTDA.</organizationName>
+                    <descriptionTemplate>${basedir}/src/license/description.ftl</descriptionTemplate>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <licenseName>bsd_3</licenseName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>update-file-header</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <excludes>
+                                <exclude>*Test.java</exclude>
+                                <exclude>*.xml</exclude>
+                                <exclude>*.xsd</exclude>
+                                <exclude>LocaleUtils.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <!--
             <plugin>
