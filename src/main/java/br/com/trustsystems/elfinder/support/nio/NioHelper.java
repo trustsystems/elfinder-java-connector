@@ -93,7 +93,28 @@ public final class NioHelper {
      * @throws IOException if something goes wrong.
      */
     public static void deleteFolder(Path path) throws IOException {
+        deleteFolder(path, true);
+    }
+
+    /**
+     * Deletes a directory if it exists.
+     *
+     * @param path              the path to the directory to delete.
+     * @param bypassNotEmptyDir flag that indicates to delete not empty folder.
+     * @throws IOException if something goes wrong.
+     */
+    public static void deleteFolder(Path path, boolean bypassNotEmptyDir) throws IOException {
         if (isFolder(path)) {
+            if (bypassNotEmptyDir) {
+                List<Path> listChildren = listChildren(path);
+                for (Path children : listChildren) {
+                    if (isFolder(children)) {
+                        deleteFolder(children, bypassNotEmptyDir);
+                    } else {
+                        deleteFile(children);
+                    }
+                }
+            }
             Files.deleteIfExists(path);
         }
     }
@@ -246,29 +267,50 @@ public final class NioHelper {
     }
 
     /**
-     * Gets children paths from the give directory (excluding hidden files).
+     * Gets children paths from the give directory.
      *
      * @param dir path to the directory.
      * @return the children paths from the give directory.
      * @throws IOException if something goes wrong.
      */
     public static List<Path> listChildren(Path dir) throws IOException {
+        return listChildren(dir, null);
+    }
+
+    /**
+     * Gets children paths from the give directory (excluding hidden files).
+     *
+     * @param dir path to the directory.
+     * @return the children paths from the give directory.
+     * @throws IOException if something goes wrong.
+     */
+    public static List<Path> listChildrenNotHidden(Path dir) throws IOException {
+        // not hidden file filter
+        DirectoryStream.Filter<Path> notHiddenFilter = new DirectoryStream.Filter<Path>() {
+            public boolean accept(Path path) throws IOException {
+                return !Files.isHidden(path);
+            }
+        };
+        return listChildren(dir, notHiddenFilter);
+    }
+
+    /**
+     * Gets children paths from the give directory appling the given filter.
+     *
+     * @param dir    path to the directory.
+     * @param filter the filter to be applied
+     * @return the children paths from the give directory.
+     * @throws IOException if something goes wrong.
+     */
+    public static List<Path> listChildren(Path dir, DirectoryStream.Filter<? super Path> filter) throws IOException {
         if (isFolder(dir)) {
-
-            // not hidden file filter
-            DirectoryStream.Filter<Path> notHiddenFilter = new DirectoryStream.Filter<Path>() {
-                public boolean accept(Path path) throws IOException {
-                    return !Files.isHidden(path);
-                }
-            };
-
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dir, notHiddenFilter)) {
-                List<Path> list = new ArrayList<>();
+            List<Path> list = new ArrayList<>();
+            try (DirectoryStream<Path> directoryStream = (filter != null ? Files.newDirectoryStream(dir, filter) : Files.newDirectoryStream(dir))) {
                 for (Path p : directoryStream) {
                     list.add(p);
                 }
-                return Collections.unmodifiableList(list);
             }
+            return Collections.unmodifiableList(list);
         }
         return Collections.emptyList();
     }
@@ -337,7 +379,7 @@ public final class NioHelper {
      * @throws IOException if something goes wrong.
      */
     public static List<Path> search(Path path, String target) throws IOException {
-        return search(path, target, NioHelper.FileTreeSearch.MatchMode.EXACT, true);
+        return search(path, target, NioHelper.FileTreeSearch.MatchMode.ANYWHERE, true);
     }
 
     /**

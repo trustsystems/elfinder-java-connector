@@ -76,12 +76,16 @@ public class NIO2FileSystemVolume implements Volume {
         }
     }
 
-    private Path fromTarget(Target target) {
+    public static Path fromTarget(Target target) {
         return ((NIO2FileSystemTarget) target).getPath();
     }
 
     private Target fromPath(Path path) {
-        return new NIO2FileSystemTarget(this, path);
+        return fromPath(this, path);
+    }
+
+    public static Target fromPath(NIO2FileSystemVolume volume, Path path) {
+        return new NIO2FileSystemTarget(volume, path);
     }
 
     public Path getRootDir() {
@@ -197,7 +201,7 @@ public class NIO2FileSystemVolume implements Volume {
 
     @Override
     public Target[] listChildren(Target target) throws IOException {
-        List<Path> childrenResultList = NioHelper.listChildren(fromTarget(target));
+        List<Path> childrenResultList = NioHelper.listChildrenNotHidden(fromTarget(target));
         List<Target> targets = new ArrayList<>(childrenResultList.size());
         for (Path path : childrenResultList) {
             targets.add(fromPath(path));
