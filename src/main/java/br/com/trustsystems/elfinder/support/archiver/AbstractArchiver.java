@@ -113,16 +113,15 @@ public abstract class AbstractArchiver implements Archiver {
             }
 
             // open streams to write the compress target contents and auto close it
-            try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(
-                    new BufferedOutputStream(
-                            targetVolume.openOutputStream(compressTarget)))) {
-
-                if (isTargetFolder) {
-                    // compress target directory
-                    compressDirectory(target, archiveOutputStream);
-                } else {
-                    // compress target file
-                    compressFile(target, archiveOutputStream);
+            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(targetVolume.openOutputStream(compressTarget))) {
+                try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(bufferedOutputStream)) {
+                    if (isTargetFolder) {
+                        // compress target directory
+                        compressDirectory(target, archiveOutputStream);
+                    } else {
+                        // compress target file
+                        compressFile(target, archiveOutputStream);
+                    }
                 }
             }
         }
