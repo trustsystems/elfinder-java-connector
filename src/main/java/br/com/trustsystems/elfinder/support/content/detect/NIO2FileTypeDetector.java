@@ -33,43 +33,54 @@ package br.com.trustsystems.elfinder.support.content.detect;
 
 import org.apache.tika.Tika;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+/**
+ * NIO file type detector implementation that uses Tika API.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class NIO2FileTypeDetector extends java.nio.file.spi.FileTypeDetector implements Detector {
 
     private final Tika tika = new Tika();
 
+    /**
+     * Gets mime type from the given input stream.
+     *
+     * @return the mime type.
+     * @throws IOException if the stream can not be read.
+     */
     @Override
-    public String detect(InputStream inputStream) {
-        try {
-            return tika.detect(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to detect inputstream type", e);
-        }
+    public String detect(InputStream inputStream) throws IOException {
+        return tika.detect(inputStream);
     }
 
+    /**
+     * Gets mime type from the given file path.
+     *
+     * @return the mime type.
+     * @throws IOException if the file can not be read.
+     */
     @Override
-    public String detect(File file) {
-        try {
-            // is this good?
-            if (file.isDirectory()) {
-                return MIME_DIRECTORY;
-            }
-            return tika.detect(file);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to detect file type", e);
+    public String detect(Path path) throws IOException {
+        if (Files.isDirectory(path)) {
+            return "directory";
         }
+        return tika.detect(path);
     }
 
+    /**
+     * Gets mime type from the given file path.
+     *
+     * @return the mime type.
+     * @throws IOException if the file can not be read.
+     */
     @Override
-    public String probeContentType(java.nio.file.Path path) throws IOException {
-        // is this good?
-        if (java.nio.file.Files.isDirectory(path)) {
-            return MIME_DIRECTORY;
-        }
-        return tika.detect(path.toFile());
+    public String probeContentType(Path path) throws IOException {
+        return detect(path);
     }
 
 }

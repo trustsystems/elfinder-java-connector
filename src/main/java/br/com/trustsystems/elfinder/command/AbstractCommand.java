@@ -37,7 +37,6 @@ import br.com.trustsystems.elfinder.core.Target;
 import br.com.trustsystems.elfinder.service.ElfinderStorage;
 import br.com.trustsystems.elfinder.service.VolumeHandler;
 import br.com.trustsystems.elfinder.support.archiver.ArchiverOption;
-import br.com.trustsystems.elfinder.support.content.detect.Detector;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +134,6 @@ public abstract class AbstractCommand implements ElfinderCommand {
         if (target == null) {
             return null;
         }
-
         return new VolumeHandler(target, elfinderStorage);
     }
 
@@ -163,7 +161,7 @@ public abstract class AbstractCommand implements ElfinderCommand {
         info.put(ElFinderConstants.ELFINDER_PARAMETER_WRITE, target.isWritable() ? ElFinderConstants.ELFINDER_TRUE_RESPONSE : ElFinderConstants.ELFINDER_FALSE_RESPONSE);
         info.put(ElFinderConstants.ELFINDER_PARAMETER_LOCKED, target.isLocked() ? ElFinderConstants.ELFINDER_TRUE_RESPONSE : ElFinderConstants.ELFINDER_FALSE_RESPONSE);
 
-        if (target.getMimeType() != null && target.getMimeType().startsWith(Detector.MIME_IMAGE)) {
+        if (target.getMimeType() != null && target.getMimeType().startsWith("image")) {
             StringBuffer qs = request.getRequestURL();
             info.put(ElFinderConstants.ELFINDER_PARAMETER_THUMBNAIL, qs.append(String.format(CMD_TMB_TARGET, target.getHash())));
         }

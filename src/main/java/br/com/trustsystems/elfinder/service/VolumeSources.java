@@ -41,6 +41,11 @@ import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.Arrays;
 
+/**
+ * Volume Sources supported.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public enum VolumeSources {
 
     FILESYSTEM {
@@ -67,7 +72,7 @@ public enum VolumeSources {
             source = source.trim().toUpperCase();
 
             for (VolumeSources volumesource : values()) {
-                if (volumesource.toString().equalsIgnoreCase(source)) {
+                if (volumesource.name().equalsIgnoreCase(source)) {
                     return volumesource;
                 }
                 throw new VolumeSourceException("Volume source not supported! The supported volumes sources are: " + Arrays.deepToString(values()).toLowerCase());

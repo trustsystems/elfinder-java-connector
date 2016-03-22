@@ -40,11 +40,11 @@ public enum ArchiverOption {
     public static final JSONObject JSON_INSTANCE = new JSONObject(INSTANCE);
 
     public String[] getCreate() {
-        return ArchiverType.supportedMimeTypes;
+        return ArchiverType.SUPPORTED_MIME_TYPES;
     }
 
     public String[] getExtract() {
-        return ArchiverType.supportedMimeTypes;
+        return ArchiverType.SUPPORTED_MIME_TYPES;
     }
 
 }

@@ -39,6 +39,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+/**
+ * Elfinder Spring Web Application Initializer.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ElfinderWebApplicationInitializer implements WebApplicationInitializer {
 
     public static final String SERVLET_NAME = "elfinder";

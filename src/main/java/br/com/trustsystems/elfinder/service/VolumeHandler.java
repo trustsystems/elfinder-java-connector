@@ -91,7 +91,7 @@ public class VolumeHandler {
         return volume.getLastModified(target);
     }
 
-    public String getMimeType() {
+    public String getMimeType() throws IOException {
         return volume.getMimeType(target);
     }
 

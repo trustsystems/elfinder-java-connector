@@ -35,7 +35,6 @@ import br.com.trustsystems.elfinder.core.Target;
 import br.com.trustsystems.elfinder.core.Volume;
 import br.com.trustsystems.elfinder.core.impl.NIO2FileSystemTarget;
 import br.com.trustsystems.elfinder.core.impl.NIO2FileSystemVolume;
-import br.com.trustsystems.elfinder.support.content.detect.Detector;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -46,8 +45,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Test(enabled = false)
+/**
+ * NIO FileSystem Volume Test.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class NIO2FileSystemVolumeTest {
+
+    // TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! MELHORAR ESSA CLASSE DE TESTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     private static final String pattern = "d MMM yyyy HH:mm:ss 'GMT'";
     private static final java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(pattern);
@@ -109,27 +114,31 @@ public class NIO2FileSystemVolumeTest {
         return ((NIO2FileSystemTarget) target).getPath();
     }
 
-    public void isFolder() {
+    @Test(enabled = false)
+    public void isFolderTest() {
         boolean folder = volume.isFolder(target);
         System.out.println("Volume#isFolder(Target target): " + folder);
         Assert.assertTrue(folder);
     }
 
-    public void listChildren() throws IOException {
+    @Test(enabled = false)
+    public void listChildrenTest() throws IOException {
         int length = volume.listChildren(target).length;
         Assert.assertEquals(length, 0);
         System.out.println("Volume#listChildren(Target target): " + length);
 //        Assert.assertEquals(volume.listChildren(toTarget(parentPath)).length, 1);
     }
 
-    public void hasChildFolder() throws IOException {
+    @Test(enabled = false)
+    public void hasChildFolderTest() throws IOException {
         boolean hasChildFolder = volume.hasChildFolder(target);
         System.out.println("Volume#hasChildFolder(Target target): " + hasChildFolder);
         Assert.assertFalse(hasChildFolder);
 //        Assert.assertTrue(volume.hasChildFolder(toTarget(parentPath)));
     }
 
-    public void getLastModified() throws IOException {
+    @Test(enabled = false)
+    public void getLastModifiedTest() throws IOException {
         long lastModifiedMillis = volume.getLastModified(target);
         Assert.assertNotNull(lastModifiedMillis);
 
@@ -139,43 +148,50 @@ public class NIO2FileSystemVolumeTest {
         System.out.println("Volume#getLastModified(Target target): " + sdf.format(calendar.getTime()));
     }
 
-    public void getName() {
+    @Test(enabled = false)
+    public void getNameTest() {
         String name = volume.getName(target);
         System.out.println("Volume#getName(Target target): " + name);
         Assert.assertEquals(name, targetPath.getFileName().toString());
     }
 
-    public void getMimeType() throws IOException {
+    @Test(enabled = false)
+    public void getMimeTypeTest() throws IOException {
         String mimeType = volume.getMimeType(target);
         System.out.println("Volume#getMimeType(Target target): " + mimeType);
-        Assert.assertEquals(Detector.MIME_DIRECTORY, mimeType);
+        Assert.assertEquals("directory", mimeType);
     }
 
-    public void getRoot() {
+    @Test(enabled = false)
+    public void getRootTest() {
         Path path = toPath(volume.getRoot());
         System.out.println("Volume#getRoot(): " + path);
         Assert.assertEquals(path, rootPath);
     }
 
-    public void getParent() {
+    @Test(enabled = false)
+    public void getParentTest() {
         Path path = toPath(volume.getParent(target));
         System.out.println("Volume#getParent(Target target): " + path);
         Assert.assertEquals(path, parentPath);
     }
 
-    public void getPath() throws IOException {
+    @Test(enabled = false)
+    public void getPathTest() throws IOException {
         String path = volume.getPath(target);
         System.out.println("Volume#getPath(Target target): " + path);
         Assert.assertEquals(path, targetPath.subpath(rootPath.getNameCount(), targetPath.getNameCount()).toString());
     }
 
-    public void getSize() throws IOException {
+    @Test(enabled = false)
+    public void getSizeTest() throws IOException {
         long size = volume.getSize(target);
         System.out.println("Volume#getSize(Target target) in bytes: " + size);
         Assert.assertNotNull(size);
     }
 
-    public void isRoot() throws IOException {
+    @Test(enabled = false)
+    public void isRootTest() throws IOException {
         boolean root = volume.isRoot(target);
         Assert.assertFalse(root);
         System.out.println("Volume#isRoot(Target target): " + root);

@@ -37,22 +37,50 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Abstract Archiver defines some archive behaviors and this class has some
+ * convenient methods. This class must be extended by concrete archive
+ * implementations.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public abstract class AbstractArchiver implements Archiver {
 
     public static final String DEFAULT_ARCHIVE_NAME = "Archive";
 
-    protected Path compressFile;
+    /**
+     * Defines how to create a archive inputstream.
+     *
+     * @param bufferedInputStream the inputstream.
+     * @return the archive inputstream.
+     * @throws IOException if something goes wrong.
+     */
+    public abstract ArchiveInputStream createArchiveInputStream(BufferedInputStream bufferedInputStream) throws IOException;
 
-    public abstract ArchiveInputStream createArchiveInputStream(BufferedInputStream bufferedInputStream);
-
+    /**
+     * Defines how to create a archive outputstream.
+     *
+     * @param bufferedOutputStream the outputstream.
+     * @return the archive outputstream.
+     * @throws IOException if something goes wrong.
+     */
     public abstract ArchiveOutputStream createArchiveOutputStream(BufferedOutputStream bufferedOutputStream) throws IOException;
 
+    /**
+     * Defines how to create a archive entry.
+     *
+     * @param targetPath  the target path.
+     * @param targetSize  the target size.
+     * @param targetBytes the target bytes.
+     * @return the archive entry.
+     */
     public abstract ArchiveEntry createArchiveEntry(String targetPath, long targetSize, byte[] targetBytes);
 
     @Override
@@ -60,37 +88,34 @@ public abstract class AbstractArchiver implements Archiver {
         return DEFAULT_ARCHIVE_NAME;
     }
 
+    /**
+     * Default compress implementation used by .tar and .tgz
+     *
+     * @return the compress archive target.
+     */
     @Override
     public Target compress(List<Target> targets) throws IOException {
-
-        compressFile = null;
-
         Target compressTarget = null;
-        OutputStream outputStream = null;
-        BufferedOutputStream bufferedOutputStream = null;
-        ArchiveOutputStream archiveOutputStream = null;
 
-        try {
+        for (Target target : targets) {
+            // get target volume
+            final Volume targetVolume = target.getVolume();
 
-            for (Target target : targets) {
+            // gets the target infos
+            final String targetName = targetVolume.getName(target);
+            final String targetDir = targetVolume.getParent(target).toString();
+            final boolean isTargetFolder = targetVolume.isFolder(target);
 
-                // gets the target infos
-                final Volume targetVolume = target.getVolume();
-                final String targetName = targetVolume.getName(target);
-                final String targetDir = targetVolume.getParent(target).toString();
-                final boolean isTargetFolder = targetVolume.isFolder(target);
+            if (compressTarget == null) {
+                // create compress file
+                String compressFileName = (targets.size() == 1) ? targetName : getArchiveName();
+                compressTarget = targetVolume.fromPath(Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension()).toString());
+            }
 
-                if (compressFile == null) {
-                    // create compress file
-                    String compressFileName = (targets.size() == 1) ? targetName : getArchiveName();
-                    compressFile = Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension());
-                    compressTarget = targetVolume.fromPath(compressFile.toString());
-
-                    // open streams to write the compress contents to
-                    outputStream = Files.newOutputStream(compressFile);
-                    bufferedOutputStream = new BufferedOutputStream(outputStream);
-                    archiveOutputStream = createArchiveOutputStream(bufferedOutputStream);
-                }
+            // open streams to write the compress target contents and auto close it
+            try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(
+                    new BufferedOutputStream(
+                            targetVolume.openOutputStream(compressTarget)))) {
 
                 if (isTargetFolder) {
                     // compress target directory
@@ -100,39 +125,106 @@ public abstract class AbstractArchiver implements Archiver {
                     compressFile(target, archiveOutputStream);
                 }
             }
-
-        } finally {
-            // close all streams
-            if (archiveOutputStream != null) {
-                archiveOutputStream.finish();
-                archiveOutputStream.close();
-            }
-            if (bufferedOutputStream != null) {
-                bufferedOutputStream.close();
-            }
-            if (outputStream != null) {
-                outputStream.close();
-            }
         }
         return compressTarget;
     }
 
+    /**
+     * Default decompress implementation used by .tar and .tgz
+     *
+     * @return the decompress target.
+     */
     @Override
-    public Target decompress(Target target) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("operation not supported yet");
+    public Target decompress(Target targetCompress) throws IOException {
+        Target decompressTarget;
+
+        final Volume volume = targetCompress.getVolume();
+
+        // open streams to read the compress target contents and auto close it
+        try (ArchiveInputStream archiveInputStream = createArchiveInputStream(
+                new BufferedInputStream(
+                        volume.openInputStream(targetCompress)))) {
+
+            // gets the compress target infos
+            final String src = targetCompress.toString();
+            final String dest = removeExtension(src);
+
+            // creates the decompress target infos
+            decompressTarget = volume.fromPath(dest);
+
+            // creates the dest folder if not exists
+            volume.createFolder(decompressTarget);
+
+            // get the compress target list entry
+            ArchiveEntry entry;
+            while ((entry = archiveInputStream.getNextEntry()) != null) {
+                if (archiveInputStream.canReadEntryData(entry)) {
+                    // get the entry infos
+                    final String entryName = entry.getName();
+                    final Target target = volume.fromPath(Paths.get(dest, entryName).toString());
+                    final Target parent = volume.getParent(target);
+
+                    // create parent folder if not exists
+                    if (parent != null && !volume.exists(parent)) {
+                        volume.createFolder(parent);
+                    }
+
+                    if (!entry.isDirectory()) {
+                        // open streams to write the decompress target contents and auto close it
+                        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                                volume.openOutputStream(target))) {
+
+                            // get entry content
+                            byte[] content = new byte[(int) entry.getSize()];
+                            // read and write content
+                            ArchiverUtils.flow(archiveInputStream, bufferedOutputStream, content);
+                        }
+                    }
+                }
+            }
+        }
+        return decompressTarget;
     }
 
-    private void compressFile(Target target, ArchiveOutputStream archiveOutputStream) throws IOException {
+    /**
+     * Removes the extension from the given compress file name.
+     *
+     * @param compressSourceName the compress file name.
+     * @return the compress file name without extension.
+     */
+    public static String removeExtension(String compressSourceName) {
+        if (compressSourceName != null) {
+            int index = compressSourceName.lastIndexOf('.');
+            if (index > 0) {
+                return compressSourceName.substring(0, index);
+            }
+        }
+        return compressSourceName;
+    }
+
+    /**
+     * Defines how to compress a target file.
+     *
+     * @param target              the target to write in the outpustream.
+     * @param archiveOutputStream the archive outputstream.
+     * @throws IOException if something goes wrong.
+     */
+    protected final void compressFile(Target target, ArchiveOutputStream archiveOutputStream) throws IOException {
         addTargetToArchiveOutputStream(target, archiveOutputStream);
     }
 
-    private void compressDirectory(Target target, ArchiveOutputStream archiveOutputStream) throws IOException {
+    /**
+     * Defines how to compress a target directory.
+     *
+     * @param target              the compress directory.
+     * @param archiveOutputStream the archive outputstream.
+     * @throws IOException if something goes wrong.
+     */
+    protected final void compressDirectory(Target target, ArchiveOutputStream archiveOutputStream) throws IOException {
         Volume targetVolume = target.getVolume();
         Target[] targetChildrens = targetVolume.listChildren(target);
 
         for (Target targetChildren : targetChildrens) {
-
             if (targetVolume.isFolder(targetChildren)) {
                 // go down the directory tree recursively
                 compressDirectory(targetChildren, archiveOutputStream);
@@ -142,11 +234,18 @@ public abstract class AbstractArchiver implements Archiver {
         }
     }
 
+    /**
+     * Add some target to the archive outputstream.
+     *
+     * @param target              the target to write in the outputstream.
+     * @param archiveOutputStream the archive outputstream.
+     * @throws IOException if something goes wrong.
+     */
     private void addTargetToArchiveOutputStream(Target target, ArchiveOutputStream archiveOutputStream) throws IOException {
         Volume targetVolume = target.getVolume();
 
         try (InputStream targetInputStream = targetVolume.openInputStream(target)) {
-
+            // get the target infos
             final long targetSize = targetVolume.getSize(target);
             final byte[] targetBytes = ArchiverUtils.toByteArray(targetInputStream);
             final String targetPath = targetVolume.getPath(target); // relative path

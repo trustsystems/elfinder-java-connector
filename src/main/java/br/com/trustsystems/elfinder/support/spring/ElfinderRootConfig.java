@@ -54,6 +54,11 @@ import org.springframework.context.annotation.FilterType;
 
 import java.util.*;
 
+/**
+ * Elfinder Spring Root Configuration.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 @Configuration
 @ComponentScan(
         basePackages = {"br.com.trustsystems.elfinder"},
@@ -121,12 +126,9 @@ public class ElfinderRootConfig {
             securityConstraint.setReadable(isReadable);
             securityConstraint.setWritable(isWritable);
 
-            // creates volume security
-            DefaultVolumeSecurity defaultVolumeSecurity = new DefaultVolumeSecurity();
-            defaultVolumeSecurity.setVolumePattern(Character.toString(defaultVolumeId) + ElFinderConstants.ELFINDER_VOLUME_SERCURITY_REGEX);
-            defaultVolumeSecurity.setSecurityConstraint(securityConstraint);
-
-            elfinderVolumeSecurities.add(defaultVolumeSecurity);
+            // creates volume pattern and volume security
+            final String volumePattern = Character.toString(defaultVolumeId) + ElFinderConstants.ELFINDER_VOLUME_SERCURITY_REGEX;
+            elfinderVolumeSecurities.add(new DefaultVolumeSecurity(volumePattern, securityConstraint));
 
             // prepare next volumeId character
             defaultVolumeId++;

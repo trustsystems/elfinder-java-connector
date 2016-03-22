@@ -40,6 +40,11 @@ import org.json.JSONObject;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * Defines how to execute the size command.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class SizeCommand extends AbstractJsonCommand implements ElfinderCommand {
 
     @Override

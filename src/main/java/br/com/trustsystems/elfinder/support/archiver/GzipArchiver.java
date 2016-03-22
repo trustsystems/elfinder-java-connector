@@ -37,6 +37,7 @@ import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 import java.io.BufferedInputStream;
@@ -68,7 +69,8 @@ public class GzipArchiver extends AbstractArchiver implements Archiver {
     }
 
     @Override
-    public ArchiveInputStream createArchiveInputStream(BufferedInputStream bufferedInputStream) {
-        return new TarArchiveInputStream(bufferedInputStream);
+    public ArchiveInputStream createArchiveInputStream(BufferedInputStream bufferedInputStream) throws IOException {
+        return new TarArchiveInputStream(new GzipCompressorInputStream(bufferedInputStream));
     }
+
 }

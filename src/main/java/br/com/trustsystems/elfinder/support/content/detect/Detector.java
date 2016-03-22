@@ -31,15 +31,13 @@
  */
 package br.com.trustsystems.elfinder.support.content.detect;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 public interface Detector {
 
-    String MIME_DIRECTORY = "directory";
-    String MIME_IMAGE = "image";
+    String detect(InputStream inputStream) throws IOException;
 
-    String detect(InputStream inputStream);
-
-    String detect(File file);
+    String detect(Path path) throws IOException;
 }

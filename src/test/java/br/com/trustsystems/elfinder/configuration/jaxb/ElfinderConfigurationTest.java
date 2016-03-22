@@ -50,6 +50,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 
+/**
+ * Elfinder Configuration Test.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ElfinderConfigurationTest {
 
     private static Marshaller marshaller;

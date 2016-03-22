@@ -31,6 +31,11 @@
  */
 package br.com.trustsystems.elfinder.exception;
 
+/**
+ * Elfinder COnfiguration Exception.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ElfinderConfigurationException extends RuntimeException {
 
     private static final long serialVersionUID = -777787881976321913L;

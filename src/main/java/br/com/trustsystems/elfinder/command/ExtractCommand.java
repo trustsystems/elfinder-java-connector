@@ -42,6 +42,11 @@ import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Defines how to execute the extract command.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ExtractCommand extends AbstractJsonCommand implements ElfinderCommand {
 
     @Override

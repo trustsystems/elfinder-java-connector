@@ -87,8 +87,7 @@ public final class ArchiverUtils {
      * This method buffers the input internally, so there is no need to use a
      * <code>BufferedInputStream</code>.
      *
-     * @param is    the <code>InputStream</code> to read from
-     * @param close closes the <code>InputStream</code> after read
+     * @param is the <code>InputStream</code> to read from
      * @return the requested byte array
      * @throws NullPointerException if the input is null
      * @throws java.io.IOException  if an I/O error occurs

@@ -33,6 +33,11 @@ package br.com.trustsystems.elfinder.configuration;
 
 import java.net.URI;
 
+/**
+ * Utility class to handle the Elfinder Configuration file path.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public final class ElfinderConfigurationUtils {
 
     private ElfinderConfigurationUtils() {

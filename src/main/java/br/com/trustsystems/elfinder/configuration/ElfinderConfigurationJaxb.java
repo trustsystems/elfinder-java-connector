@@ -44,11 +44,16 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.InputStream;
 
+/**
+ * JAXB class to validate and read Elfinder Configuration XML File.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ElfinderConfigurationJaxb {
 
     public static final String SCHEMA_XML = "elfinder-configuration.xsd";
 
-    private static final ElfinderConfigurationJaxb instance = new ElfinderConfigurationJaxb();
+    private static final ElfinderConfigurationJaxb INSTANCE = new ElfinderConfigurationJaxb();
 
     private final Unmarshaller unmarshaller;
 
@@ -83,7 +88,7 @@ public class ElfinderConfigurationJaxb {
     public static ElfinderConfiguration unmarshal(InputStream is) throws ElfinderConfigurationException {
         if (null != is) {
             try {
-                return (ElfinderConfiguration) ElfinderConfigurationJaxb.instance.unmarshaller.unmarshal(is);
+                return (ElfinderConfiguration) ElfinderConfigurationJaxb.INSTANCE.unmarshaller.unmarshal(is);
             } catch (JAXBException e) {
                 throw new ElfinderConfigurationException("Could not unmarshal elFinder configuration xml", e);
             }

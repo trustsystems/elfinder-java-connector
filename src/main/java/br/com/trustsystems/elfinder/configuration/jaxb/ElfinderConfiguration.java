@@ -1,34 +1,3 @@
-/*
- * #%L
- * %%
- * Copyright (C) 2015 Trustsystems Desenvolvimento de Sistemas, LTDA.
- * %%
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * 3. Neither the name of the Trustsystems Desenvolvimento de Sistemas, LTDA. nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * #L%
- */
 
 package br.com.trustsystems.elfinder.configuration.jaxb;
 
@@ -43,9 +12,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Classe Java de anonymous complex type.
+ * <p>Java class for anonymous complex type.
  * 
- * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+ * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType&gt;
@@ -135,7 +104,7 @@ public class ElfinderConfiguration {
     protected List<ElfinderConfiguration.Volume> volume;
 
     /**
-     * Obtém o valor da propriedade thumbnail.
+     * Gets the value of the thumbnail property.
      * 
      * @return
      *     possible object is
@@ -147,7 +116,7 @@ public class ElfinderConfiguration {
     }
 
     /**
-     * Define o valor da propriedade thumbnail.
+     * Sets the value of the thumbnail property.
      * 
      * @param value
      *     allowed object is
@@ -189,9 +158,9 @@ public class ElfinderConfiguration {
 
 
     /**
-     * <p>Classe Java de anonymous complex type.
+     * <p>Java class for anonymous complex type.
      * 
-     * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+     * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType&gt;
@@ -223,7 +192,7 @@ public class ElfinderConfiguration {
         protected BigInteger width;
 
         /**
-         * Obtém o valor da propriedade width.
+         * Gets the value of the width property.
          * 
          * @return
          *     possible object is
@@ -235,7 +204,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade width.
+         * Sets the value of the width property.
          * 
          * @param value
          *     allowed object is
@@ -250,9 +219,9 @@ public class ElfinderConfiguration {
 
 
     /**
-     * <p>Classe Java de anonymous complex type.
+     * <p>Java class for anonymous complex type.
      * 
-     * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+     * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType&gt;
@@ -321,7 +290,7 @@ public class ElfinderConfiguration {
         protected ElfinderConfiguration.Volume.Constraint constraint;
 
         /**
-         * Obtém o valor da propriedade source.
+         * Gets the value of the source property.
          * 
          * @return
          *     possible object is
@@ -333,7 +302,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade source.
+         * Sets the value of the source property.
          * 
          * @param value
          *     allowed object is
@@ -345,7 +314,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Obtém o valor da propriedade alias.
+         * Gets the value of the alias property.
          * 
          * @return
          *     possible object is
@@ -357,7 +326,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade alias.
+         * Sets the value of the alias property.
          * 
          * @param value
          *     allowed object is
@@ -369,7 +338,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Obtém o valor da propriedade path.
+         * Gets the value of the path property.
          * 
          * @return
          *     possible object is
@@ -381,7 +350,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade path.
+         * Sets the value of the path property.
          * 
          * @param value
          *     allowed object is
@@ -393,7 +362,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Obtém o valor da propriedade default.
+         * Gets the value of the default property.
          * 
          * @return
          *     possible object is
@@ -405,7 +374,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade default.
+         * Sets the value of the default property.
          * 
          * @param value
          *     allowed object is
@@ -417,7 +386,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Obtém o valor da propriedade locale.
+         * Gets the value of the locale property.
          * 
          * @return
          *     possible object is
@@ -429,7 +398,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade locale.
+         * Sets the value of the locale property.
          * 
          * @param value
          *     allowed object is
@@ -441,7 +410,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Obtém o valor da propriedade constraint.
+         * Gets the value of the constraint property.
          * 
          * @return
          *     possible object is
@@ -453,7 +422,7 @@ public class ElfinderConfiguration {
         }
 
         /**
-         * Define o valor da propriedade constraint.
+         * Sets the value of the constraint property.
          * 
          * @param value
          *     allowed object is
@@ -466,9 +435,9 @@ public class ElfinderConfiguration {
 
 
         /**
-         * <p>Classe Java de anonymous complex type.
+         * <p>Java class for anonymous complex type.
          * 
-         * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
+         * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType&gt;
@@ -497,7 +466,7 @@ public class ElfinderConfiguration {
             protected boolean writable;
 
             /**
-             * Obtém o valor da propriedade locked.
+             * Gets the value of the locked property.
              * 
              */
             public boolean isLocked() {
@@ -505,7 +474,7 @@ public class ElfinderConfiguration {
             }
 
             /**
-             * Define o valor da propriedade locked.
+             * Sets the value of the locked property.
              * 
              */
             public void setLocked(boolean value) {
@@ -513,7 +482,7 @@ public class ElfinderConfiguration {
             }
 
             /**
-             * Obtém o valor da propriedade readable.
+             * Gets the value of the readable property.
              * 
              */
             public boolean isReadable() {
@@ -521,7 +490,7 @@ public class ElfinderConfiguration {
             }
 
             /**
-             * Define o valor da propriedade readable.
+             * Sets the value of the readable property.
              * 
              */
             public void setReadable(boolean value) {
@@ -529,7 +498,7 @@ public class ElfinderConfiguration {
             }
 
             /**
-             * Obtém o valor da propriedade writable.
+             * Gets the value of the writable property.
              * 
              */
             public boolean isWritable() {
@@ -537,7 +506,7 @@ public class ElfinderConfiguration {
             }
 
             /**
-             * Define o valor da propriedade writable.
+             * Sets the value of the writable property.
              * 
              */
             public void setWritable(boolean value) {

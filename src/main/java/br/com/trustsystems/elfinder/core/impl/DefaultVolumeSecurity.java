@@ -35,16 +35,17 @@ import br.com.trustsystems.elfinder.core.VolumeSecurity;
 
 public class DefaultVolumeSecurity implements VolumeSecurity {
 
-    private String volumePattern;
-    private SecurityConstraint securityConstraint;
+    private final String volumePattern;
+    private final SecurityConstraint securityConstraint;
+
+    public DefaultVolumeSecurity(String volumePattern, SecurityConstraint securityConstraint) {
+        this.volumePattern = volumePattern;
+        this.securityConstraint = securityConstraint;
+    }
 
     @Override
     public String getVolumePattern() {
         return volumePattern;
-    }
-
-    public void setVolumePattern(String volumePattern) {
-        this.volumePattern = volumePattern;
     }
 
     @Override
@@ -52,7 +53,4 @@ public class DefaultVolumeSecurity implements VolumeSecurity {
         return securityConstraint;
     }
 
-    public void setSecurityConstraint(SecurityConstraint securityConstraint) {
-        this.securityConstraint = securityConstraint;
-    }
 }

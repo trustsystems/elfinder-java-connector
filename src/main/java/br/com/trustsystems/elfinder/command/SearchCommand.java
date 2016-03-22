@@ -43,6 +43,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Defines how to execute the search command.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class SearchCommand extends AbstractJsonCommand implements ElfinderCommand {
 
     @Override

@@ -67,7 +67,8 @@ public class TarArchiver extends AbstractArchiver implements Archiver {
     }
 
     @Override
-    public ArchiveInputStream createArchiveInputStream(BufferedInputStream bufferedInputStream) {
+    public ArchiveInputStream createArchiveInputStream(BufferedInputStream bufferedInputStream) throws IOException {
         return new TarArchiveInputStream(bufferedInputStream);
     }
+
 }

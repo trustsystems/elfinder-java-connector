@@ -48,11 +48,11 @@ public interface Volume {
 
     boolean exists(Target target);
 
-    Target fromPath(String relativePath);
+    Target fromPath(String path);
 
     long getLastModified(Target target) throws IOException;
 
-    String getMimeType(Target target);
+    String getMimeType(Target target) throws IOException;
 
     String getAlias();
 

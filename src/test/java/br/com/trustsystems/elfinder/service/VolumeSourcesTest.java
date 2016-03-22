@@ -35,14 +35,19 @@ import br.com.trustsystems.elfinder.exception.VolumeSourceException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+/**
+ * Volume Sources Test.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class VolumeSourcesTest {
 
     @Test
     public void normalizeSource() {
         String[] sources = {"FILESYSTEM", "filesystem", "FileSystem", " File System", "file_system", "file-        system"};
         Assert.assertNotNull(sources);
-        for (int i = 0; i < sources.length; i++) {
-            Assert.assertEquals(VolumeSources.of(sources[i]), VolumeSources.FILESYSTEM);
+        for (String source : sources) {
+            Assert.assertEquals(VolumeSources.of(source), VolumeSources.FILESYSTEM);
         }
     }
 

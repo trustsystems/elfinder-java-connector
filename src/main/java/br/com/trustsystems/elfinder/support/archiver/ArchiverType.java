@@ -63,7 +63,7 @@ public enum ArchiverType {
         throw new RuntimeException(String.format("Archive type (%s) not supported", mimeType));
     }
 
-    public static String[] supportedMimeTypes = {
+    public static String[] SUPPORTED_MIME_TYPES = {
             ZIP.getMimeType(),
             TAR.getMimeType(),
             GZIP.getMimeType()

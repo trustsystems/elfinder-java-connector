@@ -1,4 +1,35 @@
 /*
+ * #%L
+ * %%
+ * Copyright (C) 2015 - 2016 Trustsystems Desenvolvimento de Sistemas, LTDA.
+ * %%
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ * 
+ * 3. Neither the name of the Trustsystems Desenvolvimento de Sistemas, LTDA. nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software without
+ *    specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * #L%
+ */
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,40 +47,38 @@
  */
 package br.com.trustsystems.elfinder.support.locale;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
  * <p>Operations to assist when working with a {@link Locale}.</p>
- *
+ * <p/>
  * <p>This class tries to handle {@code null} input gracefully.
  * An exception will not be thrown for a {@code null} input.
  * Each method documents its behaviour in more detail.</p>
  *
- * @since 2.2
  * @version $Id: LocaleUtils.java 1606089 2014-06-27 13:18:55Z ggregory $
+ * @since 2.2
  */
 public class LocaleUtils {
 
-    /** Concurrent map of language locales by country. */
+    /**
+     * Concurrent map of language locales by country.
+     */
     private static final ConcurrentMap<String, List<Locale>> cLanguagesByCountry =
             new ConcurrentHashMap<String, List<Locale>>();
 
-    /** Concurrent map of country locales by language. */
+    /**
+     * Concurrent map of country locales by language.
+     */
     private static final ConcurrentMap<String, List<Locale>> cCountriesByLanguage =
             new ConcurrentHashMap<String, List<Locale>>();
 
     /**
      * <p>{@code LocaleUtils} instances should NOT be constructed in standard programming.
      * Instead, the class should be used as {@code LocaleUtils.toLocale("en_GB");}.</p>
-     *
+     * <p/>
      * <p>This constructor is public to permit tools that require a JavaBean instance
      * to operate.</p>
      */
@@ -58,23 +87,24 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Converts a String to a Locale.</p>
-     *
+     * <p/>
      * <p>This method takes the string format of a locale and creates the
      * locale object from it.</p>
-     *
+     * <p/>
      * <pre>
      *   LocaleUtils.toLocale("")           = new Locale("", "")
      *   LocaleUtils.toLocale("en")         = new Locale("en", "")
      *   LocaleUtils.toLocale("en_GB")      = new Locale("en", "GB")
      *   LocaleUtils.toLocale("en_GB_xxx")  = new Locale("en", "GB", "xxx")   (#)
      * </pre>
-     *
+     * <p/>
      * <p>(#) The behaviour of the JDK variant constructor changed between JDK1.3 and JDK1.4.
      * In JDK1.3, the constructor upper cases the variant, in JDK1.4, it doesn't.
      * Thus, the result from getVariant() may vary depending on your JDK.</p>
-     *
+     * <p/>
      * <p>This method validates the input strictly.
      * The language code must be lowercase.
      * The country code must be uppercase.
@@ -82,7 +112,7 @@ public class LocaleUtils {
      * The length must be correct.
      * </p>
      *
-     * @param str  the locale String to convert, null returns null
+     * @param str the locale String to convert, null returns null
      * @return a Locale, null if null input
      * @throws IllegalArgumentException if the string is an invalid format
      * @see Locale#forLanguageTag(String)
@@ -124,7 +154,7 @@ public class LocaleUtils {
         }
 
         final String[] split = str.split("_", -1);
-        final int occurrences = split.length -1;
+        final int occurrences = split.length - 1;
         switch (occurrences) {
             case 0:
                 if (isAllLowerCase(str) && (len == 2 || len == 3)) {
@@ -155,16 +185,17 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Obtains the list of locales to search through when performing
      * a locale search.</p>
-     *
+     * <p/>
      * <pre>
      * localeLookupList(Locale("fr","CA","xxx"))
      *   = [Locale("fr","CA","xxx"), Locale("fr","CA"), Locale("fr")]
      * </pre>
      *
-     * @param locale  the locale to start from
+     * @param locale the locale to start from
      * @return the unmodifiable list of Locale objects, 0 being locale, not null
      */
     public static List<Locale> localeLookupList(final Locale locale) {
@@ -172,21 +203,22 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Obtains the list of locales to search through when performing
      * a locale search.</p>
-     *
+     * <p/>
      * <pre>
      * localeLookupList(Locale("fr", "CA", "xxx"), Locale("en"))
      *   = [Locale("fr","CA","xxx"), Locale("fr","CA"), Locale("fr"), Locale("en"]
      * </pre>
-     *
+     * <p/>
      * <p>The result list begins with the most specific locale, then the
      * next more general and so on, finishing with the default locale.
      * The list will never contain the same locale twice.</p>
      *
-     * @param locale  the locale to start from, null returns empty list
-     * @param defaultLocale  the default locale to use if no other is found
+     * @param locale        the locale to start from, null returns empty list
+     * @param defaultLocale the default locale to use if no other is found
      * @return the unmodifiable list of Locale objects, 0 being locale, not null
      */
     public static List<Locale> localeLookupList(final Locale locale, final Locale defaultLocale) {
@@ -207,9 +239,10 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Obtains an unmodifiable list of installed locales.</p>
-     *
+     * <p/>
      * <p>This method is a wrapper around {@link Locale#getAvailableLocales()}.
      * It is more efficient, as the JDK method must create a new array each
      * time it is called.</p>
@@ -221,9 +254,10 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Obtains an unmodifiable set of installed locales.</p>
-     *
+     * <p/>
      * <p>This method is a wrapper around {@link Locale#getAvailableLocales()}.
      * It is more efficient, as the JDK method must create a new array each
      * time it is called.</p>
@@ -235,6 +269,7 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Checks if the locale specified is in the list of available locales.</p>
      *
@@ -246,13 +281,14 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Obtains the list of languages supported for a given country.</p>
-     *
+     * <p/>
      * <p>This method takes a country code and searches to find the
      * languages available for that country. Variant locales are removed.</p>
      *
-     * @param countryCode  the 2 letter country code, null returns empty
+     * @param countryCode the 2 letter country code, null returns empty
      * @return an unmodifiable List of Locale objects, not null
      */
     public static List<Locale> languagesByCountry(final String countryCode) {
@@ -278,13 +314,14 @@ public class LocaleUtils {
     }
 
     //-----------------------------------------------------------------------
+
     /**
      * <p>Obtains the list of countries supported for a given language.</p>
-     *
+     * <p/>
      * <p>This method takes a language code and searches to find the
      * countries available for that language. Variant locales are removed.</p>
      *
-     * @param languageCode  the 2 letter language code, null returns empty
+     * @param languageCode the 2 letter language code, null returns empty
      * @return an unmodifiable List of Locale objects, not null
      */
     public static List<Locale> countriesByLanguage(final String languageCode) {
@@ -313,9 +350,13 @@ public class LocaleUtils {
     //-----------------------------------------------------------------------
     // class to avoid synchronization (Init on demand)
     static class SyncAvoid {
-        /** Unmodifiable list of available locales. */
+        /**
+         * Unmodifiable list of available locales.
+         */
         private static final List<Locale> AVAILABLE_LOCALE_LIST;
-        /** Unmodifiable set of available locales. */
+        /**
+         * Unmodifiable set of available locales.
+         */
         private static final Set<Locale> AVAILABLE_LOCALE_SET;
 
         static {
@@ -327,10 +368,10 @@ public class LocaleUtils {
 
     /**
      * <p>Checks if the CharSequence contains only lowercase characters.</p>
-     *
+     * <p/>
      * <p>{@code null} will return {@code false}.
      * An empty CharSequence (length()=0) will return {@code false}.</p>
-     *
+     * <p/>
      * <pre>
      * StringUtils.isAllLowerCase(null)   = false
      * StringUtils.isAllLowerCase("")     = false
@@ -342,9 +383,8 @@ public class LocaleUtils {
      * StringUtils.isAllLowerCase("ab/c") = false
      * </pre>
      *
-     * @param cs  the CharSequence to check, may be null
+     * @param cs the CharSequence to check, may be null
      * @return {@code true} if only contains lowercase characters, and is non-null
-     * @since 2.5
      * @since 3.0 Changed signature from isAllLowerCase(String) to isAllLowerCase(CharSequence)
      */
     public static boolean isAllLowerCase(final CharSequence cs) {
@@ -362,10 +402,10 @@ public class LocaleUtils {
 
     /**
      * <p>Checks if the CharSequence contains only uppercase characters.</p>
-     *
+     * <p/>
      * <p>{@code null} will return {@code false}.
      * An empty String (length()=0) will return {@code false}.</p>
-     *
+     * <p/>
      * <pre>
      * StringUtils.isAllUpperCase(null)   = false
      * StringUtils.isAllUpperCase("")     = false
@@ -379,7 +419,6 @@ public class LocaleUtils {
      *
      * @param cs the CharSequence to check, may be null
      * @return {@code true} if only contains uppercase characters, and is non-null
-     * @since 2.5
      * @since 3.0 Changed signature from isAllUpperCase(String) to isAllUpperCase(CharSequence)
      */
     public static boolean isAllUpperCase(final CharSequence cs) {
@@ -397,9 +436,10 @@ public class LocaleUtils {
 
     // Empty checks
     //-----------------------------------------------------------------------
+
     /**
      * <p>Checks if a CharSequence is empty ("") or null.</p>
-     *
+     * <p/>
      * <pre>
      * StringUtils.isEmpty(null)      = true
      * StringUtils.isEmpty("")        = true
@@ -407,12 +447,12 @@ public class LocaleUtils {
      * StringUtils.isEmpty("bob")     = false
      * StringUtils.isEmpty("  bob  ") = false
      * </pre>
-     *
+     * <p/>
      * <p>NOTE: This method changed in Lang version 2.0.
      * It no longer trims the CharSequence.
      * That functionality is available in isBlank().</p>
      *
-     * @param cs  the CharSequence to check, may be null
+     * @param cs the CharSequence to check, may be null
      * @return {@code true} if the CharSequence is empty or null
      * @since 3.0 Changed signature from isEmpty(String) to isEmpty(CharSequence)
      */

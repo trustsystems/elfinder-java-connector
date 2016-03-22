@@ -31,6 +31,11 @@
  */
 package br.com.trustsystems.elfinder.exception;
 
+/**
+ * Volume Source Exception.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class VolumeSourceException extends RuntimeException {
 
     private static final long serialVersionUID = -2443056237600812799L;

@@ -43,6 +43,11 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Elfinder Configuration Wrapper class.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ElfinderConfigurationWrapper {
 
     private static final Logger log = LoggerFactory.getLogger(ElfinderConfigurationWrapper.class);
@@ -51,6 +56,8 @@ public class ElfinderConfigurationWrapper {
     public static final String CONF_DIR = System.getProperty("user.home") + File.separator + "elfinder" + File.separator;
     public static final String XML_PATH = CONF_DIR + XML_FILE;
 
+//    public static final String XML_PATH = System.getenv("ELFINDER_CONFIGURATION_XML");
+
     private ElfinderConfiguration elfinderConfiguration;
 
     public ElfinderConfigurationWrapper() {
@@ -58,8 +65,13 @@ public class ElfinderConfigurationWrapper {
     }
 
     private void loadElfinderConfiguration() {
-//      try (InputStream resourceAsStream = new FileInputStream(new File(XML_PATH))) {
-        try (InputStream resourceAsStream = Files.newInputStream(Paths.get(ElfinderConfigurationUtils.toURI(XML_PATH)))) {
+        if (XML_PATH == null) {
+            throw new AssertionError(
+                    "Could not load Elfinder Configuration XML file. Please verify if the ELFINDER_CONFIGURATION_XML enviroment variable is setup.");
+        }
+
+        try (InputStream resourceAsStream = Files.newInputStream(
+                Paths.get(ElfinderConfigurationUtils.toURI(XML_PATH)))) {
 
             this.elfinderConfiguration = ElfinderConfigurationJaxb.unmarshal(resourceAsStream);
 
