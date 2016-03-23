@@ -37,6 +37,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.CRC32;
 
+/**
+ * Archiver Utility class.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public final class ArchiverUtils {
 
     private ArchiverUtils() {

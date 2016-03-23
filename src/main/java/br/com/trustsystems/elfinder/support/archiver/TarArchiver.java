@@ -42,6 +42,11 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
+/**
+ * Tar Archive Implementation.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class TarArchiver extends AbstractArchiver implements Archiver {
 
     @Override

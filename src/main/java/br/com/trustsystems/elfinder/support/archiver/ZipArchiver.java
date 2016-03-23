@@ -51,9 +51,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 
+/**
+ * Zip Archiver Implementation.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public class ZipArchiver extends AbstractArchiver implements Archiver {
-
-    private Path compressFile;
 
     @Override
     public String getMimeType() {
@@ -77,10 +80,13 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
     }
 
     @Override
-    public ArchiveOutputStream createArchiveOutputStream(BufferedOutputStream bufferedOutputStream) throws IOException {
-        // for some internal optimizations should use the constructor that accepts a File argument
-//    	return new ZipArchiveOutputStream(bufferedOutputStream);
-        return new ZipArchiveOutputStream(compressFile.toFile());
+    public ArchiveOutputStream createArchiveOutputStream(BufferedOutputStream bufferedOutputStream) {
+        return new ZipArchiveOutputStream(bufferedOutputStream);
+    }
+
+    // for some internal optimizations should use the constructor that accepts a File argument
+    public ArchiveOutputStream createArchiveOutputStream(Path path) throws IOException {
+        return new ZipArchiveOutputStream(path.toFile());
     }
 
     @Override
@@ -91,7 +97,7 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
     @Override
     public Target compress(List<Target> targets) throws IOException {
         Target compressTarget = null;
-        compressFile = null;
+        Path compressFile = null;
 
         for (Target target : targets) {
             // get target volume
@@ -110,15 +116,13 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
             }
 
             // open streams to write the compress target contents and auto close it
-            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(targetVolume.openOutputStream(compressTarget))) {
-                try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(bufferedOutputStream)) {
-                    if (isTargetFolder) {
-                        // compress target directory
-                        compressDirectory(target, archiveOutputStream);
-                    } else {
-                        // compress target file
-                        compressFile(target, archiveOutputStream);
-                    }
+            try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(compressFile)) {
+                if (isTargetFolder) {
+                    // compress target directory
+                    compressDirectory(target, archiveOutputStream);
+                } else {
+                    // compress target file
+                    compressFile(target, archiveOutputStream);
                 }
             }
 

@@ -33,6 +33,11 @@ package br.com.trustsystems.elfinder.support.archiver;
 
 import org.json.JSONObject;
 
+/**
+ * Archiver Options.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public enum ArchiverOption {
 
     INSTANCE;

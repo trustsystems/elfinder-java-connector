@@ -31,6 +31,11 @@
  */
 package br.com.trustsystems.elfinder.support.archiver;
 
+/**
+ * Archiver Supported Types.
+ *
+ * @author Thiago Gutenberg Carvalho da Costa
+ */
 public enum ArchiverType {
 
     TAR {
