@@ -51,6 +51,70 @@ Sample usage
 ------------
  + https://github.com/trustsystems/elfinder-demo
 
+## Configuration
+
+### ElFinder Configuration XML Example:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<elfinder-configuration 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.trustsystems.com.br/elfinder" xsi:schemaLocation="http://www.trustsystems.com.br/elfinder http://www.trustsystems.com.br/elfinder/elfinder-configuration.xsd">
+
+    <thumbnail> 
+        <width>80</width> 
+    </thumbnail> 
+
+    <volume> 
+        <source>filesystem</source> 
+        <alias>My Documents</alias> 
+        <path>/home/thiagocosta/Documents</path> 
+        <locale>pt_BR</locale> 
+        <constraint> 
+            <locked>false</locked> 
+            <readable>true</readable> 
+            <writable>true</writable> 
+        </constraint> 
+    </volume>
+
+    <volume> 
+        <source>filesystem</source> 
+        <alias>My Pictures</alias> 
+        <path>/home/thiagocosta/Pictures</path> 
+        <locale>pt_BR</locale> 
+        <constraint> 
+            <locked>true</locked> 
+            <readable>true</readable> 
+            <writable>false</writable> 
+        </constraint> 
+    </volume>
+
+</elfinder-configuration>
+```
+
+### Details
+
+```
+This element must occur only once.
+<thumbnail> This element represents thumbnail.
+    <width> This element defines the width of the thumbnail images. Minimum is 80.
+
+This element can occurs one or more times.
+<volume> This element represents the volume.
+    <source/> This element defines the source of the volume. [filesystem, dropbox, googledrive, onedrive] only filesystem is supported in the moment.
+    <alias/> This element defines an virtual name for the volume.
+    <path/> This element defines the path of the unit to be shared.
+    <default/> (Optional) This element is the first volume to be loaded. In the event of multiple occurrences the first will be selected.
+    <locale/> This element defines the locale of the volume for future indexing proposals.
+    <constraint> This element is the restriction of operations that may be applied in specific volume.
+        <locked/> This element defines the total directory lock (Usually applies to groups).
+        <readable/> This element defines the possibility of reading the file.
+        <writable/> This element defines the possibility of writing in the file.
+```
+
+### Usage
+
+ElFinder Java Connector will try to load and read the elfinder-configuration.xml in the filesystem. So it is necessary to create this configuration file inside of a folder named "elfinder" in the user.home.
+
 Authors
 -------
 
