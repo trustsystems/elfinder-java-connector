@@ -40,15 +40,13 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 
 /**
@@ -57,6 +55,8 @@ import java.util.zip.ZipEntry;
  * @author Thiago Gutenberg Carvalho da Costa
  */
 public class ZipArchiver extends AbstractArchiver implements Archiver {
+
+    private static final CRC32 crc32 = new CRC32();
 
     @Override
     public String getMimeType() {
@@ -74,7 +74,7 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
         zipEntry.setSize(targetSize);
         zipEntry.setMethod(ZipEntry.STORED);
         if (targetBytes != null) {
-            zipEntry.setCrc(ArchiverUtils.crc32Checksum(targetBytes));
+            zipEntry.setCrc(crc32Checksum(targetBytes));
         }
         return zipEntry;
     }
@@ -95,28 +95,33 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
     }
 
     @Override
-    public Target compress(List<Target> targets) throws IOException {
+    public Target compress(Target... targets) throws IOException {
         Target compressTarget = null;
         Path compressFile = null;
 
-        for (Target target : targets) {
-            // get target volume
-            final Volume targetVolume = target.getVolume();
+        ArchiveOutputStream archiveOutputStream = null;
 
-            // gets the target infos
-            final String targetName = targetVolume.getName(target);
-            final String targetDir = targetVolume.getParent(target).toString();
-            final boolean isTargetFolder = targetVolume.isFolder(target);
+        try {
 
-            if (compressFile == null) {
-                // create compress file
-                String compressFileName = (targets.size() == 1) ? targetName : getArchiveName();
-                compressFile = Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension());
-                compressTarget = targetVolume.fromPath(compressFile.toString());
-            }
+            for (Target target : targets) {
+                // get target volume
+                final Volume targetVolume = target.getVolume();
 
-            // open streams to write the compress target contents and auto close it
-            try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(compressFile)) {
+                // gets the target infos
+                final String targetName = targetVolume.getName(target);
+                final String targetDir = targetVolume.getParent(target).toString();
+                final boolean isTargetFolder = targetVolume.isFolder(target);
+
+                if (compressFile == null) {
+                    // create compress file
+                    String compressFileName = (targets.length == 1) ? targetName : getArchiveName();
+                    compressFile = Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension());
+                    compressTarget = targetVolume.fromPath(compressFile.toString());
+
+                    // open streams to write the compress target contents and auto close it
+                    archiveOutputStream = createArchiveOutputStream(compressFile);
+                }
+
                 if (isTargetFolder) {
                     // compress target directory
                     compressDirectory(target, archiveOutputStream);
@@ -126,7 +131,13 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
                 }
             }
 
+        } finally {
+            if (archiveOutputStream != null) {
+                archiveOutputStream.finish();
+                archiveOutputStream.close();
+            }
         }
+
         return compressTarget;
     }
 
@@ -134,14 +145,15 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
     public Target decompress(Target targetCompress) throws IOException {
         Target decompressTarget;
 
+        final Volume volume = targetCompress.getVolume();
+
+        // gets the compress target infos
         final String src = targetCompress.toString();
+        final String dest = removeExtension(src);
 
         // create zipFile instance to read the compress target 
         // contents  and auto close it
         try (ZipFile zipFile = new ZipFile(src)) {
-            // gets the compress target infos
-            final Volume volume = targetCompress.getVolume();
-            final String dest = removeExtension(src);
 
             // creates the decompress target infos
             decompressTarget = volume.fromPath(dest);
@@ -157,7 +169,7 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
                 if (zipFile.canReadEntryData(zipArchiveEntry)) {
                     // get the entry infos
                     final String entryName = zipArchiveEntry.getName();
-                    final InputStream inputStream = zipFile.getInputStream(zipArchiveEntry);
+                    final InputStream archiveInputStream = zipFile.getInputStream(zipArchiveEntry);
                     final Target target = volume.fromPath(Paths.get(dest, entryName).toString());
                     final Target parent = volume.getParent(target);
 
@@ -168,17 +180,25 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
 
                     if (!zipArchiveEntry.isDirectory()) {
                         // open streams to write the decompress target contents and auto close it
-                        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                        try (OutputStream outputStream = new BufferedOutputStream(
                                 volume.openOutputStream(target))) {
 
                             // get entry content
-                            byte[] content = new byte[(int) zipArchiveEntry.getSize()];
-                            ArchiverUtils.flow(inputStream, bufferedOutputStream, content);
+//                            byte[] content = new byte[(int) zipArchiveEntry.getSize()];
+//                            outputStream.write(content);
+                            IOUtils.copy(archiveInputStream, outputStream);
                         }
                     }
                 }
             }
         }
         return decompressTarget;
+    }
+
+    public static long crc32Checksum(byte[] bytes) {
+        crc32.update(bytes);
+        long checksum = crc32.getValue();
+        crc32.reset();
+        return checksum;
     }
 }

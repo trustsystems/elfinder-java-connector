@@ -36,13 +36,10 @@ import br.com.trustsystems.elfinder.core.Volume;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Abstract Archiver defines some archive behaviors and this class has some
@@ -76,12 +73,12 @@ public abstract class AbstractArchiver implements Archiver {
     /**
      * Defines how to create a archive entry.
      *
-     * @param targetPath  the target path.
-     * @param targetSize  the target size.
-     * @param targetBytes the target bytes.
+     * @param targetPath    the target path.
+     * @param targetSize    the target size.
+     * @param targetContent the target bytes.
      * @return the archive entry.
      */
-    public abstract ArchiveEntry createArchiveEntry(String targetPath, long targetSize, byte[] targetBytes);
+    public abstract ArchiveEntry createArchiveEntry(String targetPath, long targetSize, byte[] targetContent);
 
     @Override
     public String getArchiveName() {
@@ -94,37 +91,58 @@ public abstract class AbstractArchiver implements Archiver {
      * @return the compress archive target.
      */
     @Override
-    public Target compress(List<Target> targets) throws IOException {
+    public Target compress(Target... targets) throws IOException {
         Target compressTarget = null;
 
-        for (Target target : targets) {
-            // get target volume
-            final Volume targetVolume = target.getVolume();
+        OutputStream outputStream = null;
+        BufferedOutputStream bufferedOutputStream = null;
+        ArchiveOutputStream archiveOutputStream = null;
 
-            // gets the target infos
-            final String targetName = targetVolume.getName(target);
-            final String targetDir = targetVolume.getParent(target).toString();
-            final boolean isTargetFolder = targetVolume.isFolder(target);
+        try {
 
-            if (compressTarget == null) {
-                // create compress file
-                String compressFileName = (targets.size() == 1) ? targetName : getArchiveName();
-                compressTarget = targetVolume.fromPath(Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension()).toString());
-            }
+            for (Target target : targets) {
+                // get target volume
+                final Volume targetVolume = target.getVolume();
 
-            // open streams to write the compress target contents and auto close it
-            try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(targetVolume.openOutputStream(compressTarget))) {
-                try (ArchiveOutputStream archiveOutputStream = createArchiveOutputStream(bufferedOutputStream)) {
-                    if (isTargetFolder) {
-                        // compress target directory
-                        compressDirectory(target, archiveOutputStream);
-                    } else {
-                        // compress target file
-                        compressFile(target, archiveOutputStream);
-                    }
+                // gets the target infos
+                final String targetName = targetVolume.getName(target);
+                final String targetDir = targetVolume.getParent(target).toString();
+                final boolean isTargetFolder = targetVolume.isFolder(target);
+
+                if (compressTarget == null) {
+                    // create compress file
+                    String compressFileName = (targets.length == 1) ? targetName : getArchiveName();
+                    compressTarget = targetVolume.fromPath(Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension()).toString());
+
+                    // open streams to write the compress target contents and auto close it
+                    outputStream = targetVolume.openOutputStream(compressTarget);
+                    bufferedOutputStream = new BufferedOutputStream(outputStream);
+                    archiveOutputStream = createArchiveOutputStream(bufferedOutputStream);
+                }
+
+                if (isTargetFolder) {
+                    // compress target directory
+                    compressDirectory(target, archiveOutputStream);
+                } else {
+                    // compress target file
+                    compressFile(target, archiveOutputStream);
                 }
             }
+
+        } finally {
+            // close streams
+            if (archiveOutputStream != null) {
+                archiveOutputStream.finish();
+                archiveOutputStream.close();
+            }
+            if (bufferedOutputStream != null) {
+                bufferedOutputStream.close();
+            }
+            if (outputStream != null) {
+                outputStream.close();
+            }
         }
+
         return compressTarget;
     }
 
@@ -139,14 +157,14 @@ public abstract class AbstractArchiver implements Archiver {
 
         final Volume volume = targetCompress.getVolume();
 
+        // gets the compress target infos
+        final String src = targetCompress.toString();
+        final String dest = removeExtension(src);
+
         // open streams to read the compress target contents and auto close it
         try (ArchiveInputStream archiveInputStream = createArchiveInputStream(
                 new BufferedInputStream(
                         volume.openInputStream(targetCompress)))) {
-
-            // gets the compress target infos
-            final String src = targetCompress.toString();
-            final String dest = removeExtension(src);
 
             // creates the decompress target infos
             decompressTarget = volume.fromPath(dest);
@@ -170,13 +188,15 @@ public abstract class AbstractArchiver implements Archiver {
 
                     if (!entry.isDirectory()) {
                         // open streams to write the decompress target contents and auto close it
-                        try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(
+                        try (OutputStream outputStream = new BufferedOutputStream(
                                 volume.openOutputStream(target))) {
 
                             // get entry content
-                            byte[] content = new byte[(int) entry.getSize()];
+//                            byte[] content = new byte[(int) entry.getSize()];
+
                             // read and write content
-                            ArchiverUtils.flow(archiveInputStream, bufferedOutputStream, content);
+//                            outputStream.write(content);
+                            IOUtils.copy(archiveInputStream, outputStream);
                         }
                     }
                 }
@@ -228,7 +248,7 @@ public abstract class AbstractArchiver implements Archiver {
                 // go down the directory tree recursively
                 compressDirectory(targetChildren, archiveOutputStream);
             } else {
-                addTargetToArchiveOutputStream(targetChildren, archiveOutputStream);
+                compressFile(targetChildren, archiveOutputStream);
             }
         }
     }
@@ -246,13 +266,14 @@ public abstract class AbstractArchiver implements Archiver {
         try (InputStream targetInputStream = targetVolume.openInputStream(target)) {
             // get the target infos
             final long targetSize = targetVolume.getSize(target);
-            final byte[] targetBytes = ArchiverUtils.toByteArray(targetInputStream);
+            final byte[] targetContent = new byte[(int) targetSize];
             final String targetPath = targetVolume.getPath(target); // relative path
 
             // creates the entry and writes in the archive output stream
-            ArchiveEntry entry = createArchiveEntry(targetPath, targetSize, targetBytes);
+            ArchiveEntry entry = createArchiveEntry(targetPath, targetSize, targetContent);
             archiveOutputStream.putArchiveEntry(entry);
-            archiveOutputStream.write(targetBytes);
+//            archiveOutputStream.write(targetContent);
+            IOUtils.copy(targetInputStream, archiveOutputStream);
             archiveOutputStream.closeArchiveEntry();
         }
     }

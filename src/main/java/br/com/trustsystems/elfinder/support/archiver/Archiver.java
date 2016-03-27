@@ -34,7 +34,6 @@ package br.com.trustsystems.elfinder.support.archiver;
 import br.com.trustsystems.elfinder.core.Target;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Archiver interface.
@@ -71,7 +70,7 @@ public interface Archiver {
      * @return the target of the compress archive.
      * @throws IOException if something goes wrong.
      */
-    Target compress(List<Target> targets) throws IOException;
+    Target compress(Target... targets) throws IOException;
 
     /**
      * Decompress the archive for the given target

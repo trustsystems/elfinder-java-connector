@@ -58,7 +58,7 @@ public class ArchiveCommand extends AbstractJsonCommand implements ElfinderComma
 
         try {
             Archiver archiver = ArchiverType.of(type).getStrategy();
-            Target targetArchive = archiver.compress(targetList);
+            Target targetArchive = archiver.compress(targetList.toArray(new Target[targetList.size()]));
 
             Object[] archiveInfos = {getTargetInfo(request, new VolumeHandler(targetArchive, elfinderStorage))};
             json.put(ElFinderConstants.ELFINDER_JSON_RESPONSE_ADDED, archiveInfos);
