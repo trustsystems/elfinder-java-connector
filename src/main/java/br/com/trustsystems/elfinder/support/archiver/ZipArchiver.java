@@ -115,7 +115,12 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
                 if (compressFile == null) {
                     // create compress file
                     String compressFileName = (targets.length == 1) ? targetName : getArchiveName();
-                    compressFile = Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension());
+                    compressFile = Paths.get(targetDir, compressFileName + getExtension());
+
+                    // creates a new compress file to not override if already exists
+                    // if you do not want this behavior, just comment this line
+                    compressFile = createFile(true, compressFile.getParent(), compressFile);
+
                     compressTarget = targetVolume.fromPath(compressFile.toString());
 
                     // open streams to write the compress target contents and auto close it
@@ -132,6 +137,7 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
             }
 
         } finally {
+            // close streams
             if (archiveOutputStream != null) {
                 archiveOutputStream.finish();
                 archiveOutputStream.close();
@@ -156,7 +162,13 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
         try (ZipFile zipFile = new ZipFile(src)) {
 
             // creates the decompress target infos
-            decompressTarget = volume.fromPath(dest);
+            Path decompressDir = Paths.get(dest);
+
+            // creates a new decompress folder to not override if already exists
+            // if you do not want this behavior, just comment this line
+            decompressDir = createFile(false, decompressDir.getParent(), decompressDir);
+
+            decompressTarget = volume.fromPath(decompressDir.toString());
 
             // creates the dest folder if not exists
             volume.createFolder(decompressTarget);
@@ -170,7 +182,7 @@ public class ZipArchiver extends AbstractArchiver implements Archiver {
                     // get the entry infos
                     final String entryName = zipArchiveEntry.getName();
                     final InputStream archiveInputStream = zipFile.getInputStream(zipArchiveEntry);
-                    final Target target = volume.fromPath(Paths.get(dest, entryName).toString());
+                    final Target target = volume.fromPath(Paths.get(decompressDir.toString(), entryName).toString());
                     final Target parent = volume.getParent(target);
 
                     // create parent folder if not exists

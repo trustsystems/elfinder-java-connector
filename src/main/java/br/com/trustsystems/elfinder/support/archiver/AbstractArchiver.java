@@ -39,7 +39,10 @@ import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Abstract Archiver defines some archive behaviors and this class has some
@@ -51,6 +54,8 @@ import java.nio.file.Paths;
 public abstract class AbstractArchiver implements Archiver {
 
     public static final String DEFAULT_ARCHIVE_NAME = "Archive";
+
+    private AtomicInteger count = new AtomicInteger(1);
 
     /**
      * Defines how to create a archive inputstream.
@@ -112,7 +117,13 @@ public abstract class AbstractArchiver implements Archiver {
                 if (compressTarget == null) {
                     // create compress file
                     String compressFileName = (targets.length == 1) ? targetName : getArchiveName();
-                    compressTarget = targetVolume.fromPath(Paths.get(targetDir, compressFileName + System.currentTimeMillis() + getExtension()).toString());
+                    Path compressFile = Paths.get(targetDir, compressFileName + getExtension());
+
+                    // creates a new compress file to not override if already exists
+                    // if you do not want this behavior, just comment this line
+                    compressFile = createFile(true, compressFile.getParent(), compressFile);
+
+                    compressTarget = targetVolume.fromPath(compressFile.toString());
 
                     // open streams to write the compress target contents and auto close it
                     outputStream = targetVolume.openOutputStream(compressTarget);
@@ -167,7 +178,14 @@ public abstract class AbstractArchiver implements Archiver {
                         volume.openInputStream(targetCompress)))) {
 
             // creates the decompress target infos
-            decompressTarget = volume.fromPath(dest);
+            Path decompressDir = Paths.get(dest);
+
+            // creates a new decompress folder to not override if already exists
+            // if you do not want this behavior, just comment this line
+            decompressDir = createFile(false, decompressDir.getParent(), decompressDir);
+
+            // creates the decompress target infos
+            decompressTarget = volume.fromPath(decompressDir.toString());
 
             // creates the dest folder if not exists
             volume.createFolder(decompressTarget);
@@ -178,7 +196,7 @@ public abstract class AbstractArchiver implements Archiver {
                 if (archiveInputStream.canReadEntryData(entry)) {
                     // get the entry infos
                     final String entryName = entry.getName();
-                    final Target target = volume.fromPath(Paths.get(dest, entryName).toString());
+                    final Target target = volume.fromPath(Paths.get(decompressDir.toString(), entryName).toString());
                     final Target parent = volume.getParent(target);
 
                     // create parent folder if not exists
@@ -203,6 +221,18 @@ public abstract class AbstractArchiver implements Archiver {
             }
         }
         return decompressTarget;
+    }
+
+    protected final Path createFile(boolean compressFile, Path parent, Path path) {
+        Path archiveFile = path;
+        if (Files.exists(archiveFile)) {
+            String archiveName = getArchiveName() + count.getAndIncrement();
+            if (compressFile) {
+                archiveName += getExtension();
+            }
+            archiveFile = createFile(compressFile, parent, Paths.get(parent.toString(), archiveName));
+        }
+        return archiveFile;
     }
 
     /**
