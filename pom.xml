@@ -63,13 +63,13 @@
         <servlet-api.version>3.1.0</servlet-api.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <json.version>20160212</json.version>
-        <slf4j.version>1.7.19</slf4j.version>
-        <logback.version>1.1.6</logback.version>
+        <slf4j.version>1.7.21</slf4j.version>
+        <logback.version>1.1.7</logback.version>
         <testng.version>6.9.10</testng.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-codec.version>1.10</commons-codec.version>
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
-        <commons-compress.version>1.10</commons-compress.version>
+        <commons-compress.version>1.11</commons-compress.version>
         <joda-time.version>2.9.2</joda-time.version>
         <tika.version>1.12</tika.version>
         <java-image-scaling.version>0.8.6</java-image-scaling.version>
@@ -91,6 +91,13 @@
                 <artifactId>commons-logging</artifactId>
                 <version>99-empty</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -107,17 +114,14 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -148,7 +152,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -290,31 +293,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>default-test</id>
-                        <configuration>
-                            <excludedGroups>self-integration,integration</excludedGroups>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>self-integration</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <groups>self-integration</groups>
-                            <reportsDirectory>target/self-integration-surefire-reports/</reportsDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
         </plugins>
     </build>
 

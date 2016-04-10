@@ -7,18 +7,19 @@ as well as community support to keep them.
 In the Trustsystems group, we offer this fully compliance connector with the 2.x version, developed using technology
 which are known on the market.
 
-technologies:
+## Technologies
 
-Java Development Kit 7 supporting NIO2.
-Spring Framework
+* Java Development Kit 7 supporting NIO2.
+* Spring Framework
 
-is a list of supported features
+## List of some supported features
 
 * All operations with files and folders on a remote server (copy, move, upload, create folder/file, rename, etc.)
-* Local file system, and total code infraestructure to support web driver e.g: Dropobox.
-* Archives create/extract (zip)
+* Local file system, and total code infraestructure to support web drivers e.g: Dropobox.
+* Archives create/extract (zip, tar, tgz)
 
-Supported Commands
+## Supported Commands
+
 * DimCommand
 * ArchiveCommand
 * DuplicateCommand
@@ -40,16 +41,13 @@ Supported Commands
 * UploadCommand
 * PutCommand
 
-for more details visit our wiki...
+## Sample usage
 
-All code contained in this connector is free to use in personal or commercial software.
-your code contribution will be very welcome
+You do not need to modify your web.xml file.
+You only need to put this library in your classpath or in the maven dependencies.
+We are using the WebApplicationInitializer SpringFramework class that is based on Java6 ServletContainerInitializer.
 
-be free
-
-Sample usage
-------------
- + https://github.com/trustsystems/elfinder-demo
+ * https://github.com/trustsystems/elfinder-demo
 
 ## Configuration
 
@@ -118,7 +116,8 @@ ElFinder Java Connector will try to load and read the elfinder-configuration.xml
 Authors
 -------
 
- * Developers: Wenderson Ferreira de Souza <wenderson@trustsystems.com.br>, Thiago Gutenberg Carvalho da Costa <thiaguten@gmail.com>
+ * Wenderson Ferreira de Souza <wenderson@trustsystems.com.br>
+ * Thiago Gutenberg Carvalho da Costa <thiaguten@gmail.com>
 
 License
 -------
@@ -153,3 +152,6 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
+
+Your code contribution will be very welcome
+Be free
